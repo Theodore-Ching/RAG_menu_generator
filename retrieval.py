@@ -10,25 +10,19 @@ import numpy as np
 import pandas as pd
 import random
 import os, json, time, ast, pickle
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from paths import DATA_DIR, KB_DIR, BM25_PATH, CORPUS_PATH
 
 # load index and corpus from disk
 with open(BM25_PATH, 'rb') as f: bm25 = pickle.load(f)
 corpus_df = pd.read_parquet(CORPUS_PATH)
 
-_STOPWORDS = {
-    'a','an','the','and','or','but','in','on','at','to','for','of','with',
-    'i','me','my','we','our','you','your','he','she','it','its','they',
-    'is','are','was','were','be','been','being','have','has','had',
-    'do','does','did','will','would','could','should','may','might',
-    'give','get','some','any','all','this','that','these','those',
-    'from','by','as','up','about','into','through','so','if',
-    'can','just','also','then','when','where','how','what','which',
-    'not','no','nor','yet','both','either','neither','each','few',
-    'most','other','such','own','same','here','there','s','re','t','ve',
-    'recipes','recipe','dish','dishes','food','meal','meals','please','want',
-    'suggest','create','plan','prepare','using','use','without','avoid',
-    'course','courses','dinner','lunch','breakfast','menu',
+
+_STOPWORDS = set(ENGLISH_STOP_WORDS) | {
+    "give", "recipe", "recipes", "meal", "meals", "dish", "dishes",
+    'food','please','want','suggest','create','plan','prepare',
+    'using','use','without','avoid','menu',
+    'course','courses','dinner','lunch','breakfast'
 }
 
 def retrieve_top_k(query: str, k: int = 5) -> pd.DataFrame:
