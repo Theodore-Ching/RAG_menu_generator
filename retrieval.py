@@ -20,9 +20,8 @@ corpus_df = pd.read_parquet(CORPUS_PATH)
 
 _STOPWORDS = set(ENGLISH_STOP_WORDS) | {
     "give", "recipe", "recipes", "meal", "meals", "dish", "dishes",
-    'food','please','want','suggest','create','plan','prepare',
-    'using','use','without','avoid','menu',
-    'course','courses','dinner','lunch','breakfast'
+    'food', 'please', 'want', 'suggest', 'create', 'plan', 'prepare',
+    'using', 'use', 'without', 'avoid', 'menu', 'course', 'courses'
 }
 
 def retrieve_top_k(query: str, k: int = 5) -> pd.DataFrame:
