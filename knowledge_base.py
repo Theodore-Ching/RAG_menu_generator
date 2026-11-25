@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import random
 import os, json, time, ast, pickle
+from paths import DATA_DIR, KB_DIR, BM25_PATH, CORPUS_PATH
 
 # set seeds for full reproducibility
 np.random.seed(123)
@@ -23,10 +24,7 @@ except ImportError:
 # load dataset and build corpus 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# paths
-BASE_DIR = os.getcwd()
-DATA_DIR = os.path.join(BASE_DIR, 'cooking_dataset')
-KB_DIR   = os.path.join(BASE_DIR, 'knowledge_base')
+# make knowledge base directory if it doesn't exist
 os.makedirs(KB_DIR, exist_ok=True)
 
 print("Setup complete. rank-bm25 ready.")
@@ -82,17 +80,14 @@ bm25 = BM25Okapi(tokenized_corpus)
 index_time = time.time() - t0
 
 # save index to disk
-bm25_path   = os.path.join(KB_DIR, 'bm25_index.pkl')
-corpus_path = os.path.join(KB_DIR, 'corpus.parquet')
-
-with open(bm25_path, 'wb') as f:
+with open(BM25_PATH, 'wb') as f:
     pickle.dump(bm25, f)
 
-corpus_df[['Title', 'Ingredients', 'Recipe']].to_parquet(corpus_path, index=False)
+corpus_df[['Title', 'Ingredients', 'Recipe']].to_parquet(CORPUS_PATH, index=False)
 
-print(f"BM25 index saved  → {bm25_path}")
-print(f"Corpus saved      → {corpus_path}")
+print(f"BM25 index saved  → {BM25_PATH}")
+print(f"Corpus saved      → {CORPUS_PATH}")
 print()
 print("To reload in a later session:")
-print("  with open(bm25_path, 'rb') as f: bm25 = pickle.load(f)")
-print("  corpus_df = pd.read_parquet(corpus_path)")
+print("  with open(BM25_PATH, 'rb') as f: bm25 = pickle.load(f)")
+print("  corpus_df = pd.read_parquet(CORPUS_PATH)")
