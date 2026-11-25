@@ -91,3 +91,16 @@ print()
 print("To reload in a later session:")
 print("  with open(BM25_PATH, 'rb') as f: bm25 = pickle.load(f)")
 print("  corpus_df = pd.read_parquet(CORPUS_PATH)")
+
+# KB statistics
+doc_lengths   = [len(tokens) for tokens in tokenized_corpus]
+num_docs      = len(doc_lengths)
+avg_doc_len   = float(np.mean(doc_lengths))
+median_doc_len = float(np.median(doc_lengths))
+
+print()
+print("KB STATISTICS")
+print(f"\tNumber of indexed documents  : {num_docs:,}")
+print(f"\tIndexing time                : {index_time:.2f} s")
+print(f"\tAverage document length      : {avg_doc_len:.1f} tokens")
+print(f"\tMedian  document length      : {median_doc_len:.0f} tokens")
