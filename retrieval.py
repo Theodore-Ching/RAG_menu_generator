@@ -21,7 +21,7 @@ corpus_df = pd.read_parquet(CORPUS_PATH)
 _STOPWORDS = set(ENGLISH_STOP_WORDS) | {
     "give", "recipe", "recipes", "meal", "meals", "dish", "dishes",
     'food', 'please', 'want', 'suggest', 'create', 'plan', 'prepare',
-    'using', 'use', 'without', 'avoid', 'menu', 'course', 'courses'
+    'using', 'use', 'without', 'avoid', 'menu', 'course', 'courses', 'dinner', 'lunch', 'breakfast'
 }
 
 def retrieve_top_k(query: str, k: int = 5) -> pd.DataFrame:
@@ -42,7 +42,7 @@ def retrieve_top_k(query: str, k: int = 5) -> pd.DataFrame:
     return results.reset_index(drop=True)
 
 # measure retrieval latency
-sample_query = "Give me some chicken recipes."
+sample_query = "Give me some chicken dinner recipes."
 _ = retrieve_top_k(sample_query)       # warm-up
 t0 = time.time()
 sample_results = retrieve_top_k(sample_query)
