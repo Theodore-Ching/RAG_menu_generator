@@ -7,16 +7,21 @@ import os, json, time, ast, pickle
 np.random.seed(123)
 random.seed(123)
 
-# ------------------------------------------------------------------------------------------------------------------------------------------------------
-# knowledge base construction
-# ------------------------------------------------------------------------------------------------------------------------------------------------------
-
 try:
     from rank_bm25 import BM25Okapi
 except ImportError:
     import subprocess, sys
     subprocess.run([sys.executable, '-m', 'pip', 'install', 'rank-bm25', '-q'])
     from rank_bm25 import BM25Okapi
+
+# ======================================================================================================================================================
+# KNOWLEDGE BASE CONSTRUCTION
+# ======================================================================================================================================================
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------------
+# load dataset and build corpus 
+# ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # paths
 BASE_DIR = os.getcwd()
@@ -61,3 +66,33 @@ corpus_df['document'] = corpus_df.apply(recipe_to_doc, axis=1)
 
 print("Sample document (first 300 chars):")
 print(corpus_df['document'].iloc[0][:300])
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------------
+# encode dataset using BM25
+# ------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# tokenise
+print("Tokenising corpus...")
+tokenized_corpus = [doc.lower().split() for doc in corpus_df['document']]
+
+print("Building BM25 index...")
+t0 = time.time()
+bm25 = BM25Okapi(tokenized_corpus)
+index_time = time.time() - t0
+
+# save index to disk
+bm25_path   = os.path.join(KB_DIR, 'bm25_index.pkl')
+corpus_path = os.path.join(KB_DIR, 'corpus.parquet')
+
+with open(bm25_path, 'wb') as f:
+    pickle.dump(bm25, f)
+
+corpus_df[['Title', 'Ingredients', 'Recipe']].to_parquet(corpus_path, index=False)
+
+print(f"BM25 index saved  → {bm25_path}")
+print(f"Corpus saved      → {corpus_path}")
+print()
+print("To reload in a later session:")
+print("  with open(bm25_path, 'rb') as f: bm25 = pickle.load(f)")
+print("  corpus_df = pd.read_parquet(corpus_path)")
